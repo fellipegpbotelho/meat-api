@@ -50,6 +50,18 @@ class UsersRouter extends Router {
           return next();
         });
     });
+
+    application.patch("/users/:id", (req, res, next) => {
+      const options = { new: true };
+      User.findByIdAndUpdate(req.params.id, req.body, options).then(user => {
+        if (user) {
+          res.json(user);
+          return next();
+        }
+        res.send(404);
+        return next();
+      });
+    });
   }
 }
 
