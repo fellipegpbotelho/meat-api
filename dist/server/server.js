@@ -9,7 +9,8 @@ class Server {
     initializeDatabase() {
         mongoose.Promise = global.Promise;
         return mongoose.connect(environment_1.environment.db.url, {
-            useMongoClient: true
+            useNewUrlParser: true,
+            useCreateIndex: true
         });
     }
     initializeRoutes(routers) {
