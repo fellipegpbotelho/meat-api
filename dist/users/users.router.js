@@ -28,6 +28,25 @@ class UsersRouter extends router_1.Router {
                 return next();
             });
         });
+        application.put("/users/:id", (req, res, next) => {
+            const options = {
+                overwrite: true
+            };
+            users_model_1.User.update({ _id: req.params.id }, req.body, options)
+                .exec()
+                .then(result => {
+                if (result.n) {
+                    return users_model_1.User.findById(req.params.id);
+                }
+                else {
+                    res.send(404);
+                }
+            })
+                .then(user => {
+                res.json(user);
+                return next();
+            });
+        });
     }
 }
 exports.usersRoutes = new UsersRouter();
