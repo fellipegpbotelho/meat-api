@@ -18,4 +18,4 @@ class UsersRouter extends model_router_1.ModelRouter {
         application.del("/users/:id", [this.validateId, this.delete]);
     }
 }
-exports.usersRoutes = new UsersRouter();
+exports.usersRouter = new UsersRouter();

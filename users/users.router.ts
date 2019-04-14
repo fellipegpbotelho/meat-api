@@ -21,4 +21,4 @@ class UsersRouter extends ModelRouter<User> {
   }
 }
 
-export const usersRoutes = new UsersRouter();
+export const usersRouter = new UsersRouter();
