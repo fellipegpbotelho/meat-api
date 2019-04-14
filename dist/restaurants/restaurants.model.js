@@ -16,7 +16,7 @@ const RestaurantSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    manu: {
+    menu: {
         type: [MenuSchema],
         required: false,
         select: false,
