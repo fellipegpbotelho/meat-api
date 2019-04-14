@@ -36,19 +36,33 @@ const UserSchema = new mongoose.Schema({
         }
     }
 });
-UserSchema.pre("save", function (next) {
+const hashPassword = (object, next) => {
+    bcrypt
+        .hash(object.password, environment_1.environment.security.saltRounds)
+        .then(hash => {
+        object.password = hash;
+        next();
+    })
+        .catch(next);
+};
+const saveMiddleware = function (next) {
     const user = this;
     if (!user.isModified("password")) {
         next();
     }
     else {
-        bcrypt
-            .hash(user.password, environment_1.environment.security.saltRounds)
-            .then(hash => {
-            user.password = hash;
-            next();
-        })
-            .catch(next);
+        hashPassword(user, next);
     }
-});
+};
+const updateMiddleware = function (next) {
+    if (!this.getUpdate().password) {
+        next();
+    }
+    else {
+        hashPassword(this.getUpdate(), next);
+    }
+};
+UserSchema.pre("save", saveMiddleware);
+UserSchema.pre("update", updateMiddleware);
+UserSchema.pre("findOneAndUpdate", updateMiddleware);
 exports.User = mongoose.model("User", UserSchema);
