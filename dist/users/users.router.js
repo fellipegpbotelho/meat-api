@@ -7,7 +7,8 @@ class UsersRouter extends model_router_1.ModelRouter {
         super(users_model_1.User);
         this.findByEmail = (req, res, next) => {
             if (req.query.email) {
-                users_model_1.User.find({ email: req.query.email })
+                users_model_1.User.findByEmail(req.query.email)
+                    .then(user => (user ? [user] : []))
                     .then(this.renderAll(res, next))
                     .catch(next);
             }
@@ -20,7 +21,10 @@ class UsersRouter extends model_router_1.ModelRouter {
         });
     }
     applyRoutes(application) {
-        application.get({ path: "/users", version: "2.0.0" }, [this.findByEmail, this.findAll]);
+        application.get({ path: "/users", version: "2.0.0" }, [
+            this.findByEmail,
+            this.findAll
+        ]);
         application.get({ path: "/users", version: "1.0.0" }, this.findAll);
         application.get("/users/:id", [this.validateId, this.findById]);
         application.post("/users", this.save);
