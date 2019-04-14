@@ -75,6 +75,14 @@ class ModelRouter extends router_1.Router {
             })
                 .catch(next);
         };
+        this.basePath = `/${model.collection.name}`;
+    }
+    envelop(document) {
+        let resource = Object.assign({
+            _links: {}
+        }, document.toJSON());
+        resource._links.self = `${this.basePath}/${resource._id}`;
+        return resource;
     }
 }
 exports.ModelRouter = ModelRouter;

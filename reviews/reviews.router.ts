@@ -9,6 +9,15 @@ class ReviewsRouter extends ModelRouter<Review> {
     super(Review);
   }
 
+  envelop(document) {
+    let resource = super.envelop(document);
+    const restaurantId = document.restaurant._id
+      ? document.restaurant._id
+      : document.restaurant;
+    resource._links.restaurant = `/restaurantes/${restaurantId}`;
+    return resource;
+  }
+
   findById = (req, res, next) => {
     this.model
       .findOne({ _id: req.params.id })
@@ -19,9 +28,9 @@ class ReviewsRouter extends ModelRouter<Review> {
   };
 
   applyRoutes(application: restify.Server) {
-    application.get("/reviews", this.findAll);
-    application.get("/reviews/:id", [this.validateId, this.findById]);
-    application.post("/reviews", this.save);
+    application.get(`${this.basePath}`, this.findAll);
+    application.get(`${this.basePath}/:id`, [this.validateId, this.findById]);
+    application.post(`${this.basePath}`, this.save);
   }
 }
 
