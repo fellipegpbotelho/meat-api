@@ -11,11 +11,16 @@ class UsersRouter extends ModelRouter<User> {
     });
   }
 
-  findByEmail = (req, res, next) => {
+  findByEmail = (req: restify.Request, res: restify.Response, next) => {
     if (req.query.email) {
       User.findByEmail(req.query.email)
         .then(user => (user ? [user] : []))
-        .then(this.renderAll(res, next))
+        .then(
+          this.renderAll(res, next, {
+            pageSize: this.pageSize,
+            url: req.url
+          })
+        )
         .catch(next);
     } else {
       next();
