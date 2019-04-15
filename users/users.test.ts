@@ -51,6 +51,38 @@ test("post /users", () => {
     .catch(fail);
 });
 
+test("get /users/aaaa - not found", () => {
+  return request(baseUrl)
+    .get("/users/aaaa")
+    .then(response => {
+      expect(response.status).toBe(404);
+    })
+    .catch(fail);
+});
+
+test("patch /users/:id", () => {
+  return request(baseUrl)
+    .post("/users")
+    .send({
+      name: "Luis Figo",
+      email: "figo@gmail.com",
+      password: "123456"
+    })
+    .then(response =>
+      request(baseUrl)
+        .patch(`/users/${response.body._id}`)
+        .send({ name: "Luis Figo - Patch" })
+    )
+    .then(response => {
+      expect(response.status).toBe(200);
+      expect(response.body._id).toBeDefined();
+      expect(response.body.name).toBe("Luis Figo - Patch");
+      expect(response.body.email).toBe("figo@gmail.com");
+      expect(response.body.password).toBeUndefined();
+    })
+    .catch(fail);
+});
+
 afterAll(() => {
   return server.shutdown();
 });
