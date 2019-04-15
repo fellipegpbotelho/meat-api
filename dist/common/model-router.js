@@ -21,7 +21,7 @@ class ModelRouter extends router_1.Router {
             page = page > 0 ? page : 1;
             const skip = (page - 1) * this.pageSize;
             this.model
-                .count({})
+                .countDocuments({})
                 .exec()
                 .then(count => {
                 this.model
@@ -53,19 +53,11 @@ class ModelRouter extends router_1.Router {
         this.replace = (req, res, next) => {
             const options = {
                 overwrite: true,
-                runValidators: true
+                runValidators: true,
+                new: true
             };
             this.model
-                .update({ _id: req.params.id }, req.body, options)
-                .exec()
-                .then(result => {
-                if (result.n) {
-                    return this.model.findById(req.params.id);
-                }
-                else {
-                    throw new restify_errors_1.NotFoundError("Document not found");
-                }
-            })
+                .findOneAndUpdate({ _id: req.params.id }, req.body, options)
                 .then(this.render(res, next))
                 .catch(next);
         };
@@ -78,10 +70,10 @@ class ModelRouter extends router_1.Router {
         };
         this.delete = (req, res, next) => {
             this.model
-                .remove({ _id: req.params.id })
+                .deleteOne({ _id: req.params.id })
                 .exec()
-                .then((commandResult) => {
-                if (commandResult.result.n) {
+                .then((result) => {
+                if (result.ok) {
                     res.send(204);
                 }
                 else {
