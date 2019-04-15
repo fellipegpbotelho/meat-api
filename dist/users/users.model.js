@@ -65,7 +65,10 @@ const updateMiddleware = function (next) {
 UserSchema.pre("save", saveMiddleware);
 UserSchema.pre("update", updateMiddleware);
 UserSchema.pre("findOneAndUpdate", updateMiddleware);
-UserSchema.statics.findByEmail = function (email) {
-    return this.findOne({ email });
+UserSchema.statics.findByEmail = function (email, projection) {
+    return this.findOne({ email }, projection);
+};
+UserSchema.methods.matches = function (password) {
+    return bcrypt.compareSync(password, this.password);
 };
 exports.User = mongoose.model("User", UserSchema);
