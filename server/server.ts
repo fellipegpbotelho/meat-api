@@ -1,5 +1,6 @@
 import * as restify from "restify";
 import * as mongoose from "mongoose";
+import * as fs from "fs";
 
 import { Router } from "../common/router";
 import { handleError } from "./error.handler";
@@ -23,7 +24,9 @@ export class Server {
       try {
         this.application = restify.createServer({
           name: "meat-api",
-          version: "1.0.0"
+          version: "1.0.0",
+          key: fs.readFileSync("./security/keys/key.pem"),
+          certificate: fs.readFileSync("./security/keys/cert.pem")
         });
 
         this.application.use(restify.plugins.queryParser());
