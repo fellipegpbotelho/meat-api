@@ -34,6 +34,10 @@ const UserSchema = new mongoose.Schema({
             validator: validators_1.validateCPF,
             message: "{PATH}: Invalid CPF ({VALUE})"
         }
+    },
+    profiles: {
+        type: [String],
+        required: false
     }
 });
 const hashPassword = (object, next) => {
@@ -70,5 +74,8 @@ UserSchema.statics.findByEmail = function (email, projection) {
 };
 UserSchema.methods.matches = function (password) {
     return bcrypt.compareSync(password, this.password);
+};
+UserSchema.methods.hasAny = function (...profiles) {
+    return profiles.some(profile => this.profiles.indexOf(profile) !== -1);
 };
 exports.User = mongoose.model("User", UserSchema);

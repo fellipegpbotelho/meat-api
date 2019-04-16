@@ -10,7 +10,9 @@ export interface User extends mongoose.Document {
   password: string;
   cpf: string;
   gender: string;
+  profiles: string[];
   matches(password: string): boolean;
+  hasAny(...profiles: string[]): boolean;
 }
 
 export interface UserModel extends mongoose.Model<User> {
@@ -47,6 +49,10 @@ const UserSchema = new mongoose.Schema({
       validator: validateCPF,
       message: "{PATH}: Invalid CPF ({VALUE})"
     }
+  },
+  profiles: {
+    type: [String],
+    required: false
   }
 });
 
@@ -87,6 +93,10 @@ UserSchema.statics.findByEmail = function(email: string, projection: string) {
 
 UserSchema.methods.matches = function(password): boolean {
   return bcrypt.compareSync(password, this.password);
+};
+
+UserSchema.methods.hasAny = function(...profiles: string[]): boolean {
+  return profiles.some(profile => this.profiles.indexOf(profile) !== -1);
 };
 
 export const User = mongoose.model<User, UserModel>("User", UserSchema);
