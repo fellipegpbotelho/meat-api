@@ -22,12 +22,19 @@ export class Server {
   initializeRoutes(routers: Router[]): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        this.application = restify.createServer({
+        const options: restify.ServerOptions = {
           name: "meat-api",
-          version: "1.0.0",
-          key: fs.readFileSync("./security/keys/key.pem"),
-          certificate: fs.readFileSync("./security/keys/cert.pem")
-        });
+          version: "1.0.0"
+        };
+
+        if (environment.security.enableHTTPS) {
+          options.key = fs.readFileSync(environment.security.key);
+          options.certificate = fs.readFileSync(
+            environment.security.certificate
+          );
+        }
+
+        this.application = restify.createServer(options);
 
         this.application.use(restify.plugins.queryParser());
         this.application.use(restify.plugins.bodyParser());

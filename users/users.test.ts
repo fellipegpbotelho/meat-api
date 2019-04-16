@@ -1,11 +1,13 @@
 import "jest";
 import * as request from "supertest";
 
+const auth: string = (<any>global).auth;
 const baseUrl: string = (<any>global).baseUrl;
 
 test("get /users - list", () => {
   return request(baseUrl)
     .get("/users")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(200);
       expect(response.body.items).toBeInstanceOf(Array);
@@ -16,6 +18,7 @@ test("get /users - list", () => {
 test("get /users - findByEmail", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Tony Stark",
       email: "tony.stark@gmail.com",
@@ -38,6 +41,7 @@ test("get /users - findByEmail", () => {
 test("get /users/aaaa - not found", () => {
   return request(baseUrl)
     .get("/users/aaaa")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(404);
     })
@@ -47,6 +51,7 @@ test("get /users/aaaa - not found", () => {
 test("get /users/:id - single", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Pavel Nedved",
       email: "nedved@gmail.com",
@@ -67,6 +72,7 @@ test("get /users/:id - single", () => {
 test("post /users", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Cristiano Ronaldo",
       email: "cr7@gmail.com",
@@ -87,6 +93,7 @@ test("post /users", () => {
 test("post /users - required name", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       email: "leo@gmail.com",
       password: "123456",
@@ -103,6 +110,7 @@ test("post /users - required name", () => {
 test("post /users - duplicate email", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Fernando",
       email: "fernando@gmail.com",
@@ -112,6 +120,7 @@ test("post /users - duplicate email", () => {
     .then(response =>
       request(baseUrl)
         .post("/users")
+        .set("Authorization", auth)
         .send({
           name: "Fernando",
           email: "fernando@gmail.com",
@@ -129,6 +138,7 @@ test("post /users - duplicate email", () => {
 test("post /users - invalid cpf", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Liliana Bolton",
       email: "lilianabolton@gmail.com",
@@ -147,6 +157,7 @@ test("post /users - invalid cpf", () => {
 test("patch /users/:id", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Luis Figo",
       email: "figo@gmail.com",
@@ -155,6 +166,7 @@ test("patch /users/:id", () => {
     .then(response =>
       request(baseUrl)
         .patch(`/users/${response.body._id}`)
+        .set("Authorization", auth)
         .send({ name: "Luis Figo - Patch" })
     )
     .then(response => {
@@ -170,6 +182,7 @@ test("patch /users/:id", () => {
 test("patch /users/aaaa - not found", () => {
   return request(baseUrl)
     .patch("/users/aaaa")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(404);
     })
@@ -179,6 +192,7 @@ test("patch /users/aaaa - not found", () => {
 test("put /users:/id", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Pocahontas",
       email: "pocahontas@gmail.com",
@@ -189,6 +203,7 @@ test("put /users:/id", () => {
     .then(response =>
       request(baseUrl)
         .put(`/users/${response.body._id}`)
+        .set("Authorization", auth)
         .send({
           name: "Pocahontas",
           email: "pocahontas@gmail.com",
@@ -210,6 +225,7 @@ test("put /users:/id", () => {
 test("put /users/aaaa - not found", () => {
   return request(baseUrl)
     .put("/users/aaaa")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(404);
     })
@@ -219,6 +235,7 @@ test("put /users/aaaa - not found", () => {
 test("delete /users/:id", () => {
   return request(baseUrl)
     .post("/users")
+    .set("Authorization", auth)
     .send({
       name: "Naruto Uzumaki",
       email: "naturo123@gmail.com",
@@ -235,6 +252,7 @@ test("delete /users/:id", () => {
 test("delete /users/aaaaa - not found", () => {
   return request(baseUrl)
     .delete("/users/aaaaa")
+    .set("Authorization", auth)
     .then(response => {
       expect(response.status).toBe(404);
     })

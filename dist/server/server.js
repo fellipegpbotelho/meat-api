@@ -18,12 +18,15 @@ class Server {
     initializeRoutes(routers) {
         return new Promise((resolve, reject) => {
             try {
-                this.application = restify.createServer({
+                const options = {
                     name: "meat-api",
-                    version: "1.0.0",
-                    key: fs.readFileSync("./security/keys/key.pem"),
-                    certificate: fs.readFileSync("./security/keys/cert.pem")
-                });
+                    version: "1.0.0"
+                };
+                if (environment_1.environment.security.enableHTTPS) {
+                    options.key = fs.readFileSync(environment_1.environment.security.key);
+                    options.certificate = fs.readFileSync(environment_1.environment.security.certificate);
+                }
+                this.application = restify.createServer(options);
                 this.application.use(restify.plugins.queryParser());
                 this.application.use(restify.plugins.bodyParser());
                 this.application.use(merge_patch_parser_1.mergePatchBodyParser);
